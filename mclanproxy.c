@@ -1,21 +1,3 @@
-/******************************************************************************
- * MinecraftLANProxy
- * Proxy server to enable remote access to Minecraft LAN worlds
- * Copyright 2015 Ola Liljedahl
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *****************************************************************************/
 #define _GNU_SOURCE //for ip_mreq and getopt
 #include <arpa/inet.h>
 #include <assert.h>
@@ -42,10 +24,10 @@
 #define ANNOUNCE_PORT 4445
 
 //Default public port for remote connections
-#define PUBLIC_PORT 4446
+#define PUBLIC_PORT 25565
 
 //Size of splicing buffer
-#define BUFSIZE 8192
+#define BUFSIZE 65535
 
 //Announcement message buffer size (message contains name of LAN world)
 #define ANNOUNCEMENT_BUFSIZE 256
@@ -54,7 +36,7 @@
 #define MCLAN_TIMEOUT 5
 
 //Maximum number of concurrent connections
-#define MAX_CONNECTIONS 5
+#define MAX_CONNECTIONS 8
 
 static int verbose;
 
@@ -272,7 +254,7 @@ static void layer7_splice(int remote_sd, int mclan_sd)
 	    write_socket(&r2m, mclan_sd);
 	}
     }
-cleanup: (void)0;//Need a statement to make compiler happy
+cleanup:
     if (verbose)
     {
 	pid_t pid = getpid();
@@ -358,7 +340,7 @@ static void fork_proxy(const struct sockaddr_in *sin_rem,
 	}
 	if (verbose)
 	{
-	    printf("%d: Connected to Minecraft LAN server\n", getpid());
+	    printf("%d: Connected to LAN server\n", getpid());
 	    fflush(stdout);
 	}
 
@@ -392,7 +374,7 @@ static bool read_message(int announce_sd,
     if (verbose > 1)
     {
 	printf("Announcement: %s\n", msg);
-	printf("Sender: %s:%u\n", inet_ntoa(mc_sin->sin_addr),
+	printf("Source: %s:%u\n", inet_ntoa(mc_sin->sin_addr),
 		ntohs(mc_sin->sin_port));
     }
     //Looking for (address and) port
@@ -606,7 +588,7 @@ static void listen_for_announcement(uint16_t public_port)
 		//No announcement for N seconds
 		if (verbose)
 		{
-		    printf("Lost contact with Minecraft LAN server\n");
+		    printf("Connection to LAN server lost!\n");
 		    fflush(stdout);
 		}
 		//Stop accepting connections
@@ -634,7 +616,7 @@ static void listen_for_announcement(uint16_t public_port)
 		{
 		    if (verbose)
 		    {
-			printf("Found Minecraft LAN server at %s:%u\n",
+			printf("Found LAN server at %s:%u\n",
 				inet_ntoa(mc_new.sin_addr),
 				ntohs(mc_new.sin_port));
 			fflush(stdout);
@@ -703,6 +685,8 @@ usage :
     {
 	goto usage;
     }
+
+	printf("Listening for LAN announcements...\n"); //Notify listener active
 
     listen_for_announcement(public_port);
     return 0;
