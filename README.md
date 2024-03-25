@@ -40,8 +40,3 @@ directions between the remote host and the LAN world.
 Original Author
 --------------
 Ola Liljedahl ola.liljedahl@gmail.com
-
-Final Words
---------------
-Possibly there is some better or simpler way of accomplishing this goal but it
-was fun refreshing the old socket programming skills.
