@@ -1,4 +1,4 @@
-MinecraftLANProxy
+MCLANProxy-ng
 ==============
 
 Purpose
