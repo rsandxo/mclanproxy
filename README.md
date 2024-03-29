@@ -4,10 +4,15 @@ MinecraftLANProxy
 Purpose
 --------------
 MCLANProxy is a proxy server that enables remote hosts to connect to a Minecraft
-LAN world. Minecraft unfortunately uses a dynamic port for the server connection
-which makes it difficult to open up this port in e.g. router firewall.
+LAN world. Minecraft unfortunately uses a dynamic port for the server connection in older versions which makes it difficult to open up this port in e.g. router firewall.
 MCLANProxy instead listens on a fixed port and forwards all connections and data
-to the Minecraft LAN server.
+to the Minecraft LAN server. Works on all Minecraft versions I've tested from 1.12.2-1.20.4
+
+TODO
+--------------
+lots of code cleanup
+fix bugs
+
 
 Usage
 --------------
